@@ -1,1 +1,2 @@
-# This contains all the projects covered during AWS FSD Septemeber training.
+# Repo for Vinit Sharma
+## This repository contains all the sections covered during AWS-FSD Septemeber training.
