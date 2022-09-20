@@ -3,9 +3,20 @@
 const http = require('http');
 
 function greet(req, res) {
-    res.write("<h1>Hello from Node Http server.</h1>");
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.write(JSON.stringify(
+        {
+            name: "Vinit Sharma",
+            Empid: 001,
+            address: {
+                street : "xyz street",
+                city: "Bangalore",
+                state: "Karnatka"
+            }
+        }
+    ));
     res.end();
-}
+};
 
 // ------------------ PASSING FUNCTION ------------------ 
 http.createServer(greet).listen(5000);
