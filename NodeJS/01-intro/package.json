@@ -1,0 +1,14 @@
+{
+  "name": "01-first-package",
+  "version": "1.0.0",
+  "description": "This is the first package created in AWS FSD NodeJS training",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vinit Sharma",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
