@@ -16,3 +16,5 @@
     1. express
     2. body-parser
     3. mysql
+
+- Used **Stored Procedures** for create and update along with normal sql queries.

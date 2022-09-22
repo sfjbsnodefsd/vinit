@@ -1,0 +1,43 @@
+// ****************** STORED PROCEDURE TO UPDATE AND CREATE ***************************************
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EmployeeAddOrEdit`(
+IN _EmpID INT,
+IN _NAME varchar(45),
+IN _EmpCode varchar(45),
+IN _Salary int(12)
+)
+BEGIN
+	IF _EmpID = 0 THEN
+		INSERT INTO employee(Name, EmpCode, Salary)
+        VALUES(_NAME, _EmpCode, _Salary);
+        
+        SET _EmpID = last_insert_id();
+	ELSE
+		UPDATE employee
+        SET
+			Name = _NAME,
+			EmpCode = _EmpCode,
+			Salary = _Salary
+		WHERE EmpID = _EmpID;
+END IF;
+	SELECT _EmpID as 'EmpID';
+END
+
+*******************************************************************************************************
+
+// *************************** OTHER QUERIES **********************************************************
+
+SELECT * FROM employeedb.employee;
+
+DELETE FROM employee where EmpID = 4;
+
+INSERT INTO employee (Name, EmpCode, Salary) VALUES('Rakesh', 'EMP04', 1200000);
+
+UPDATE employee SET Name = 'R', EmpCode='Emp04', Salary = 1200000 WHERE EmpID=9;
+
+
+-- Below queries are incase SQL connection could not be made.
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'welcome$1234';
+flush privileges;
+
+*******************************************************************************************************
