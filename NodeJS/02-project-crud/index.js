@@ -85,7 +85,7 @@ app.post('/employee', (req, res) => {
         if (!err) {
             rows.forEach(element => {
                 if (element.constructor == Array) {
-                    res.status(200).send({
+                    res.status(201).send({
                         message: "insertion successful",
                         "EmpID": element[0].EmpID
                     });
@@ -168,7 +168,7 @@ const UPDATE_EMPLOYEE = (res, name, emp_code, salary, emp_id) => {
     const query = `UPDATE employee SET Name = '${name}', EmpCode='${emp_code}', Salary = ${salary} WHERE EmpID=${emp_id};`
     mysqlConnection.query(query, (err, rows, fields) => {
         if (!err) {
-            res.status(201).send(rows);
+            res.status(200).send(rows);
         } else {
             res.status(400).send(err);
         }
