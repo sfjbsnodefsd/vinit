@@ -16,34 +16,34 @@ router.get("", (req, res) => {
 });
 
 //  create a course
-// router.post("", (req, res) => {
-//     try {
-//         Course.create(req.body);
-//         res.status(201).json({
-//             message: "Course created!",
-//             result: result
-//         });
-//     } catch (err) {
-//         res.json(err);
-//     }
-// });
-
-
-router.post("", (req, res) => {
-    const { title, genre, price, active } = req.body;
-    const newCourse = new Course({title, genre, price, active});
-    newCourse.save().then(result => {
-        res.status(201).send({
+router.post("", async (req, res) => {
+    try {
+        const result = await Course.create(req.body);
+        res.status(201).json({
             message: "Course created!",
             result: result
         });
-    })
-    .catch(err => {
-        res.status(500).send({
-            message: "Error occured while creating course!",
-            err: err
-        });
-    });
+    } catch (err) {
+        res.json(err);
+    }
 });
+
+
+// router.post("", (req, res) => {
+//     const { title, genre, price, active } = req.body;
+//     const newCourse = new Course({title, genre, price, active});
+//     newCourse.save().then(result => {
+//         res.status(201).send({
+//             message: "Course created!",
+//             result: result
+//         });
+//     })
+//     .catch(err => {
+//         res.status(500).send({
+//             message: "Error occured while creating course!",
+//             err: err
+//         });
+//     });
+// });
 
 module.exports = router;
