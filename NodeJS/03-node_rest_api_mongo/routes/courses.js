@@ -10,7 +10,7 @@ const Course = require("../models/course");
 /*
     * GET all courses
     * @params -> none
-    * body -> none
+    * @body -> none
 */
 
 router.get("", (req, res) => {
@@ -31,7 +31,7 @@ router.get("", (req, res) => {
 /*
     * CREATE a course
     * @params -> none
-    * body -> title, genre, price, active (everything is mandatory)
+    * @body -> title, genre, price, active (everything is mandatory)
 */
 
 // ---------------------- Method 1 ----------------------------
@@ -73,7 +73,7 @@ router.post("", async (req, res) => {
 /*
     * GET a course by id
     * @params -> id
-    * body -> none
+    * @body -> none
 */
 router.get("/:id", (req, res) => {
     const { id } = req.params;
@@ -93,7 +93,7 @@ router.get("/:id", (req, res) => {
 /*
     * UPDATE a course by id
     * @params -> id
-    * body -> title, genre, price, active (nothing is mandatory)
+    * @body -> title, genre, price, active (nothing is mandatory)
 */
 
 // ---------------------- Method 1 ----------------------------
@@ -125,7 +125,7 @@ router.put("/:id", async (req, res) => {
 /*
     * DELETE a course by id
     * @params -> id
-    * body -> null
+    * @body -> null
 */
 
 // ---------------------- Method 1 ----------------------------
