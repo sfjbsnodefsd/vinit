@@ -13,7 +13,10 @@ const courseSchema = mongoose.Schema({
         type: Number,
         require: true
     },
-    active: Boolean
+    active: {
+        type: Boolean,
+        require: true
+    }
 });
 
 module.exports = mongoose.model('Course', courseSchema);
