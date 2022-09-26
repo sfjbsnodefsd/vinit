@@ -1,0 +1,1 @@
+# Learning JWT with NodeJS app with MySQL DB
