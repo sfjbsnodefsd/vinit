@@ -16,7 +16,7 @@ app.get("/api", (req, res) => {
     });
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.APP_PORT;
 app.listen(PORT, () => {
     console.log("App is live at port ", PORT);
 });
