@@ -1,0 +1,115 @@
+{
+	"info": {
+		"_postman_id": "fac4fdb9-37b1-49f1-897f-7db9e7317f01",
+		"name": "NodeJS-mysql-crud",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get all employees",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/employees",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"employees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get emoloyee by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/employee/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"employee",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete employee by id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/employee/13",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"employee",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create new employee",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Rakesh\", \r\n    \"emp_code\": \"Emp04\",\r\n    \"salary\": 1200000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/employee",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"employee"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update/create employee",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"R\", \r\n    \"emp_code\": \"Emp09\",\r\n    \"salary\": 1200000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/employee/13",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"employee",
+						"13"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
