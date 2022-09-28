@@ -65,7 +65,7 @@ module.exports = {
         const { id } = req.params;
         const data = { ...req.body, id };
         const salt = genSaltSync(10);
-        
+
         data.password = hashSync(data.password, salt);
         updateUser(data, (err, results) => {
             if (err) {
@@ -75,10 +75,16 @@ module.exports = {
                     err: err
                 });
             }
+            if(results.affectedRows == 0) {
+                return res.status(400).json({
+                    success: 0,
+                    message: "No record found for user id",
+                });
+            }
             return res.status(200).json({
                 success: 1,
                 message: "Updated successfully",
-                data: results
+                // data: results
             });
         })
     },
@@ -92,10 +98,15 @@ module.exports = {
                     err: err
                 });
             }
+            if(results.affectedRows == 0) {
+                return res.status(400).json({
+                    success: 0,
+                    message: "No record found for user id",
+                });
+            }
             return res.status(200).json({
                 success: 1,
                 message: "User deleted successfully",
-                data: results
             });
         });
     },
