@@ -1,6 +1,7 @@
-const { hashSync, genSaltSync } = require('bcrypt');
+const { hashSync, genSaltSync, compareSync } = require('bcrypt');
 const pool = require('../../config/database');
-const { create, getUsers, getUserById, updateUser, deleteUser } = require('./user.service');
+const { create, getUsers, getUserById, updateUser, deleteUser, getUserByUserEmail } = require('./user.service');
+const { sign } = require("jsonwebtoken");
 
 module.exports = {
     createUser: (req, res) => {
@@ -75,7 +76,7 @@ module.exports = {
                     err: err
                 });
             }
-            if(results.affectedRows == 0) {
+            if (results.affectedRows === 0) {
                 return res.status(400).json({
                     success: 0,
                     message: "No record found for user id",
@@ -98,7 +99,7 @@ module.exports = {
                     err: err
                 });
             }
-            if(results.affectedRows == 0) {
+            if (results.affectedRows === 0) {
                 return res.status(400).json({
                     success: 0,
                     message: "No record found for user id",
@@ -110,4 +111,39 @@ module.exports = {
             });
         });
     },
+    login: (req, res) => {
+        const { email, password } = req.body;
+        getUserByUserEmail(email, (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    success: 0,
+                    message: "Internal server error",
+                    err: err
+                });
+            }
+            if (!result) {
+                return res.status(401).json({
+                    success: 0,
+                    message: "Invalid email",
+                });
+            }
+            const isPassValid = compareSync(password, result.password);
+            if (isPassValid) {
+                result.password = undefined;
+                const jsontoken = sign({ result }, process.env.JWT_SECRET_KEY, {
+                    expiresIn: "1h",
+                });
+                return res.status(200).json({
+                        success: 1,
+                        message: "Login succesful",
+                        token: jsontoken
+                    });
+            } else {
+                return res.status(401).json({
+                    success: 0,
+                    message: 'Incorrect password'
+                });
+            }
+        });
+    }
 };
