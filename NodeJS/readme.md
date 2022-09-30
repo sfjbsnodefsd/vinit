@@ -4,7 +4,7 @@
 
 1. [Intro](#intro)
 2. [Crud (MySQL)](#crud-mysql)
-3. [Ecom app using microservies architecture](#ecom-app-using-microservies-architecture)
+3. [Ecom app using microservices architecture](#ecom-app-using-microservices-architecture)
 
 ### Intro
 
@@ -20,7 +20,7 @@
 
 - Used **Stored Procedures** for create and update along with normal sql queries.
 
-### Ecom app using microservies architecture
+### Ecom app using microservices architecture
 
 - 3 services
 - RabbitMQ is used for message queuing
