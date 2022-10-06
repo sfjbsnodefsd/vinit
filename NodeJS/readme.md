@@ -26,3 +26,4 @@
 - RabbitMQ is used for message queuing
 - Modules used for message queuing: **amqplib**
 - Using mongo db
+- `rabbitmq-plugins enable rabbitmq_management

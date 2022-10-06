@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-export async function isAuthenticated(req, res, next) {
+module.exports = async function isAuthenticated(req, res, next) {
     // Token is in the form -> Bearer <token>; That is why we need to split
     const token = req.headers["authorization"].split(" ")[1];
 
