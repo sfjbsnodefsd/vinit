@@ -3,7 +3,7 @@
 - In another cmd run `mongo`
 
 ### To create the databases 
-- run use auth-service user product-service
+- run `auth-service` and `product-service`
 
 ### To clone a docker image of rabbitmq 
-- run -> docker run -p 5672:5672 rabbitmq (after starting the docker engine)
+- run -> `docker run -p 5672:5672 rabbitmq` (after starting the docker engine)
