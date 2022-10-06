@@ -4,10 +4,11 @@ const mongoose = require("mongoose");
 const Order = require("./Order");
 const PORT = process.env.PORT || 5002;
 const amqp = require("amqplib");
-const isAuthenticated = require("../isAuthenticated");
 
 const app = express();
 app.use(express.json());
+
+var connection, channel;
 
 mongoose
   .connect("mongodb://localhost:27017/order-service", {
@@ -27,7 +28,13 @@ async function connect() {
   await channel.assertQueue("ORDER");
 }
 
-connect();
+connect().then(() =>{
+  channel.consume("ORDER", data => {
+    const {products, userEmail} = JSON.parse(data.content);
+    console.log("consuming order queue");
+    console.log(products);
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`[ORDER-SERVICE] - LIVE AT PORT ${PORT}`);
