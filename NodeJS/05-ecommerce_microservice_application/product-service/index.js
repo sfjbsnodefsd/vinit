@@ -10,6 +10,8 @@ const isAuthenticated = require("../isAuthenticated");
 const app = express();
 app.use(express.json());
 
+var channel, connection;
+
 mongoose
   .connect("mongodb://localhost:27017/product-service", {
     useNewUrlParser: true,
@@ -69,8 +71,18 @@ app.post("/product/create", isAuthenticated, async (req, res) => {
 
 app.post("/product/buy", isAuthenticated, async (req, res) => {
   const { ids } = req.body;
-  const products = await Product.find({_id: { $in: ids }});
-  res.json(products);
+  const products = await Product.find({ _id: { $in: ids } });
+  // res.json(products);
+
+  channel.sendToQueue(
+    "ORDER",
+    Buffer.from(
+      JSON.stringify({
+        products,
+        userEmail: req.user.email,
+      })
+    )
+  );
 });
 
 app.listen(PORT, () => {
