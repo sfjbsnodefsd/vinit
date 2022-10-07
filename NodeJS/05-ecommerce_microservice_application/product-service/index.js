@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const amqp = require("amqplib");
 const Product = require("./Product");
 const isAuthenticated = require("../isAuthenticated");
+const { json } = require("express");
 
 const app = express();
 app.use(express.json());
@@ -34,15 +35,15 @@ async function connect() {
 connect();
 
 // get all products
-app.get("/products", isAuthenticated, (req, res) =>
+app.get("/products", isAuthenticated, (req, res) => {
   Product.find()
     .then((docs) => res.status(200).json({ success: 1, products: docs }))
     .catch((err) =>
       res
         .status(500)
         .json({ success: 0, message: "Some error occured", err: err })
-    )
-);
+    );
+});
 
 // create a new product
 app.post("/product/create", isAuthenticated, async (req, res) => {
@@ -83,6 +84,15 @@ app.post("/product/buy", isAuthenticated, async (req, res) => {
       })
     )
   );
+
+  channel.consume("PRODUCT", (data) => {
+    const newOrder = JSON.parse(data.content);
+    channel.ack(data);
+    return res.status(200).json({
+      success: 1,
+      newOrder,
+    });
+  });
 });
 
 app.listen(PORT, () => {
