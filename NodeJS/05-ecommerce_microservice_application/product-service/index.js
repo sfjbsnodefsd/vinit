@@ -69,7 +69,7 @@ app.post("/product/create", isAuthenticated, async (req, res) => {
 // buy a new product
 // user will send a list of products the user wants to buy, they will be identified product id
 // the order will be created of those products and the sum of the product prices will be the total billing amount
-
+var newOrder;
 app.post("/product/buy", isAuthenticated, async (req, res) => {
   const { ids } = req.body;
   const products = await Product.find({ _id: { $in: ids } });
@@ -86,12 +86,12 @@ app.post("/product/buy", isAuthenticated, async (req, res) => {
   );
 
   channel.consume("PRODUCT", (data) => {
-    const newOrder = JSON.parse(data.content);
+    newOrder = JSON.parse(data.content);
     channel.ack(data);
-    return res.status(200).json({
-      success: 1,
-      newOrder,
-    });
+  });
+  return res.status(200).json({
+    success: 1,
+    newOrder,
   });
 });
 
