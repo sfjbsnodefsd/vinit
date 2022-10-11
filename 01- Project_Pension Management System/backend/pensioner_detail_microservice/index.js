@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const PensionerDetail = require("./PensionerDetail");
 const PORT = process.env.PORT || 5002;
 const amqp = require("amqplib");
+const utils = require("./utils");
 
 const app = express();
 app.use(express.json());
@@ -28,21 +29,33 @@ async function connect() {
   await channel.assertQueue("PENSIONER_DETAIL");
 }
 
-connect().then(() => {
+connect().then(async () => {
   channel.consume("PENSIONER_DETAIL", (data) => {
+    
     const { aadhaar } = JSON.parse(data.content);
     channel.ack(data);
 
-    PensionerDetail.find({ aadhaar: aadhaar })
+    PensionerDetail.findOne({ aadhaar: aadhaar })
       .then((doc) => {
-        const response = {
-          success: 1,
-          pensioner: doc,
-        };
-        channel.sendToQueue(
-          "PROCESS_PENSION",
-          Buffer.from(JSON.stringify(response))
-        );
+        // if (doc && utils.validatePensionerDetailObject(doc)) {
+          const response = {
+            success: 1,
+            pensioner: doc,
+          };
+          channel.sendToQueue(
+            "PROCESS_PENSION",
+            Buffer.from(JSON.stringify(response))
+          );
+        // } else {
+        //   const response = {
+        //     success: 0,
+        //     err: "Internal Server Error",
+        //   };
+        //   channel.sendToQueue(
+        //     "PROCESS_PENSION",
+        //     Buffer.from(JSON.stringify(response))
+        //   );
+        // }
       })
       .catch((err) => {
         const response = {
