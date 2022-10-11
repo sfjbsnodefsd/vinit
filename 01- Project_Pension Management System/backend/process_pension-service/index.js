@@ -35,41 +35,42 @@ app.post("/processpension", isAuthenticated, (req, res) => {
   );
 
   channel.consume("PROCESS_PENSION", (data) => {
+    response_from_pensioner_detail = JSON.parse(data.content);
     channel.ack(data);
-    try {
-      response_from_pensioner_detail = JSON.parse(data.content);
-      if (!response_from_pensioner_detail.success) {
-        throw new Error(response_from_pensioner_detail.err);
-      }
-      const { classification, salary_earned, allowances, bank_detail } =
-        response_from_pensioner_detail.pensioner;
-      const pensionPercentage = getPensionPercentage(classification);
-      if (pensionPercentage === null) {
-        console.error("[DEBUG] Provided Pension classifation is not supported");
-        throw new Error("Internal Server Error");
-      }
-
-      const PensionAmount = (80 * salary_earned) / 100 + allowances;
-      const ServiceCharge = getBankServiceCharge(bank_detail.bank_type);
-      if (ServiceCharge === null) {
-        console.error("[DEBUG] Provided Bank classifation is not supported");
-        throw new Error("Internal Server Error");
-      }
-
-      return res.status(200).json({
-        success: 1,
-        pensionDetail: {
-          PensionAmount,
-          ServiceCharge,
-        },
-      });
-    } catch (err) {
-      return res.status(500).json({
-        success: 0,
-        err: err,
-      });
-    }
   });
+  
+  try {
+    if (!response_from_pensioner_detail.success) {
+      throw new Error(response_from_pensioner_detail.err);
+    }
+    const { classification, salary_earned, allowances, bank_detail } =
+      response_from_pensioner_detail.pensioner;
+    const pensionPercentage = getPensionPercentage(classification);
+    if (pensionPercentage === null) {
+      console.error("[DEBUG] Provided Pension classifation is not supported");
+      throw new Error("Internal Server Error");
+    }
+
+    const PensionAmount = (80 * salary_earned) / 100 + allowances;
+    const ServiceCharge = getBankServiceCharge(bank_detail.bank_type);
+    if (ServiceCharge === null) {
+      console.error("[DEBUG] Provided Bank classifation is not supported");
+      throw new Error("Internal Server Error");
+    }
+
+    return res.status(200).json({
+      success: 1,
+      pensionDetail: {
+        PensionAmount,
+        ServiceCharge,
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      err: err,
+    });
+  }
 });
 
 const getPensionPercentage = (classification) => {
