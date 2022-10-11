@@ -21,7 +21,7 @@ async function connect() {
 
 connect();
 
-app.post("/processpension", isAuthenticated, (req, res) => {
+app.post("/processpension", isAuthenticated, async(req, res) => {
   const { aadhaar } = req.body;
 
   channel.sendToQueue(
@@ -34,10 +34,11 @@ app.post("/processpension", isAuthenticated, (req, res) => {
     )
   );
 
-  channel.consume("PROCESS_PENSION", (data) => {
+  await channel.consume("PROCESS_PENSION", (data) => {
     response_from_pensioner_detail = JSON.parse(data.content);
     channel.ack(data);
   });
+  console.log(response_from_pensioner_detail)
   
   try {
     if (!response_from_pensioner_detail.success) {

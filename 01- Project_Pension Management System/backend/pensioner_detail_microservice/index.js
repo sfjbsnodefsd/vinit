@@ -33,6 +33,7 @@ connect().then(async () => {
   channel.consume("PENSIONER_DETAIL", (data) => {
     if (data.content) {
       const { aadhaar } = JSON.parse(data.content);
+      console.log(JSON.parse(data.content))
 
       PensionerDetail.findOne({ aadhaar: aadhaar })
         .then((doc) => {
