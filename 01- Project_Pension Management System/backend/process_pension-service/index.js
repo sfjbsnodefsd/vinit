@@ -9,6 +9,7 @@ const app = express();
 app.use(express.json());
 
 var connection, channel;
+var response_from_pensioner_detail;
 
 async function connect() {
   // const amqpServer = "amqp://localhost:15672";
@@ -35,27 +36,24 @@ app.post("/processpension", isAuthenticated, (req, res) => {
 
   channel.consume("PROCESS_PENSION", (data) => {
     channel.ack(data);
-    let response_from_pensioner_detail = JSON.parse(data.content);
-    if (response_from_pensioner_detail.success) {
+    try {
+      response_from_pensioner_detail = JSON.parse(data.content);
+      if (!response_from_pensioner_detail.success) {
+        throw new Error(response_from_pensioner_detail.err);
+      }
       const { classification, salary_earned, allowances, bank_detail } =
         response_from_pensioner_detail.pensioner;
       const pensionPercentage = getPensionPercentage(classification);
       if (pensionPercentage === null) {
         console.error("[DEBUG] Provided Pension classifation is not supported");
-        return res.status(500).json({
-          success: 0,
-          err: "Internal server error",
-        });
+        throw new Error("Internal Server Error");
       }
 
       const PensionAmount = (80 * salary_earned) / 100 + allowances;
       const ServiceCharge = getBankServiceCharge(bank_detail.bank_type);
       if (ServiceCharge === null) {
         console.error("[DEBUG] Provided Bank classifation is not supported");
-        return res.status(500).json({
-          success: 0,
-          err: "Internal server error",
-        });
+        throw new Error("Internal Server Error");
       }
 
       return res.status(200).json({
@@ -65,9 +63,10 @@ app.post("/processpension", isAuthenticated, (req, res) => {
           ServiceCharge,
         },
       });
-    } else {
-      return res.status(400).json({
-        err: response_from_pensioner_detail.err,
+    } catch (err) {
+      return res.status(500).json({
+        success: 0,
+        err: err,
       });
     }
   });
