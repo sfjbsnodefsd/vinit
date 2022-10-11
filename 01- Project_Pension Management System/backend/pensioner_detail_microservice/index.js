@@ -20,7 +20,7 @@ mongoose
     console.error("[PENSIONER_DETAIL-SERVICE] - DB connection failed!");
   });
 
-var connection, channel;
+let connection, channel;
 
 async function connect() {
   const amqpServer = "amqp://localhost:5672";
@@ -31,13 +31,11 @@ async function connect() {
 
 connect().then(async () => {
   channel.consume("PENSIONER_DETAIL", (data) => {
-    
-    const { aadhaar } = JSON.parse(data.content);
-    channel.ack(data);
+    if (data.content) {
+      const { aadhaar } = JSON.parse(data.content);
 
-    PensionerDetail.findOne({ aadhaar: aadhaar })
-      .then((doc) => {
-        // if (doc && utils.validatePensionerDetailObject(doc)) {
+      PensionerDetail.findOne({ aadhaar: aadhaar })
+        .then((doc) => {
           const response = {
             success: 1,
             pensioner: doc,
@@ -46,27 +44,20 @@ connect().then(async () => {
             "PROCESS_PENSION",
             Buffer.from(JSON.stringify(response))
           );
-        // } else {
-        //   const response = {
-        //     success: 0,
-        //     err: "Internal Server Error",
-        //   };
-        //   channel.sendToQueue(
-        //     "PROCESS_PENSION",
-        //     Buffer.from(JSON.stringify(response))
-        //   );
-        // }
-      })
-      .catch((err) => {
-        const response = {
-          success: 0,
-          err,
-        };
-        channel.sendToQueue(
-          "PROCESS_PENSION",
-          Buffer.from(JSON.stringify(response))
-        );
-      });
+          channel.ack(data);
+        })
+        .catch((err) => {
+          const response = {
+            success: 0,
+            err,
+          };
+          channel.sendToQueue(
+            "PROCESS_PENSION",
+            Buffer.from(JSON.stringify(response))
+          );
+          channel.ack(data);
+        });
+    }
   });
 });
 
