@@ -1,17 +1,21 @@
 module.exports = {
-    validatePensionerDetailObject : (PensionerDetail) => {
-        const requiredKeys = ["classification", "salary_earned", "allowances", "bank_detail"];
-        let isValid = true;
+  validatePensionerDetailObject: (PensionerDetail) => {
+    const requiredKeys = [
+      "classification",
+      "salary_earned",
+      "allowances",
+      "bank_detail",
+    ];
+    let isValid = true;
 
-        const recievedKeys = PensionerDetail.keys();
+    try {
+      for (let key of requiredKeys) {
+        const { key } = PensionerDetail;
+      }
+    } catch (err) {
+        isValid = false;
+    }
 
-        for (let key of requiredKeys) {
-            if(!recievedKeys.includes(key)) {
-                isValid = false;
-                break;
-            }
-        }
-
-        return isValid;
-    },
+    return isValid;
+  },
 };

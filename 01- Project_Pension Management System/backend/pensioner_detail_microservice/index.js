@@ -20,46 +20,67 @@ mongoose
     console.error("[PENSIONER_DETAIL-SERVICE] - DB connection failed!");
   });
 
-let connection, channel;
+// let connection, channel;
 
-async function connect() {
-  const amqpServer = "amqp://localhost:5672";
-  connection = await amqp.connect(amqpServer);
-  channel = await connection.createChannel();
-  await channel.assertQueue("PENSIONER_DETAIL");
-}
+// async function connect() {
+//   const amqpServer = "amqp://localhost:5672";
+//   connection = await amqp.connect(amqpServer);
+//   channel = await connection.createChannel();
+//   await channel.assertQueue("PENSIONER_DETAIL");
+// }
 
-connect().then(async () => {
-  channel.consume("PENSIONER_DETAIL", (data) => {
-    if (data.content) {
-      const { aadhaar } = JSON.parse(data.content);
-      console.log(JSON.parse(data.content))
+// connect().then(() => {
+//   channel.consume("PENSIONER_DETAIL", (data) => {
+//       const { aadhaar } = JSON.parse(data.content);
+//       // console.log(JSON.parse(data.content))
 
-      PensionerDetail.findOne({ aadhaar: aadhaar })
-        .then((doc) => {
-          const response = {
-            success: 1,
-            pensioner: doc,
-          };
-          channel.sendToQueue(
-            "PROCESS_PENSION",
-            Buffer.from(JSON.stringify(response))
-          );
-          channel.ack(data);
-        })
-        .catch((err) => {
-          const response = {
-            success: 0,
-            err,
-          };
-          channel.sendToQueue(
-            "PROCESS_PENSION",
-            Buffer.from(JSON.stringify(response))
-          );
-          channel.ack(data);
-        });
+//       PensionerDetail.findOne({ aadhaar: aadhaar })
+//         .then((doc) => {
+//           const response = {
+//             success: 1,
+//             pensioner: doc,
+//           };
+//           channel.sendToQueue(
+//             "PROCESS_PENSION",
+//             Buffer.from(JSON.stringify(response))
+//           );
+//           channel.ack(data);
+//         })
+//         .catch((err) => {
+//           const response = {
+//             success: 0,
+//             err,
+//           };
+//           channel.sendToQueue(
+//             "PROCESS_PENSION",
+//             Buffer.from(JSON.stringify(response))
+//           );
+//           channel.ack(data);
+//         });
+//   });
+// });
+
+app.get("/pensioner/:aadhaar", async (req, res) => {
+  const { aadhaar } = req.params;
+  try {
+    const doc = await PensionerDetail.findOne({ aadhaar: aadhaar });
+    if(!doc) {
+      throw new Error('No data found for provided aadhaar number');
     }
-  });
+    if(!utils.validatePensionerDetailObject(doc)) {
+      throw new Error('Corrupted data');
+    }
+    res.status(200).json({
+      success: 1,
+      pensioner: doc,
+    });
+  } catch (err) {
+    err = err.toString();
+    res.status(500).json({
+      success: 0,
+      err: err.split('Error:')[1],
+    });
+  }
 });
 
 // add a new pensioner
