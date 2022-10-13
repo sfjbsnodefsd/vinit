@@ -113,9 +113,11 @@ app.post("/processpension", isAuthenticated, async (req, res) => {
     });
   } catch (err) {
     console.log("[ERROR] ", err.toString());
+    err = err.toString();
+    err = err.split('Error:')[1];
     return res.status(500).json({
       success: 0,
-      err: err.toString(),
+      err: err.trim(),
     });
   }
 });
