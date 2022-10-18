@@ -27,3 +27,8 @@
 - Modules used for message queuing: **amqplib**
 - Using mongo db
 - `rabbitmq-plugins enable rabbitmq_management
+
+### Kafka
+- Messaging service
+- `docker-compose up` -> to compose the images
+- `docker exec -it kafka /opt/bitnami/kafka/bin/kafka-topics.sh \ --create \ --bootstrap-server localhost:9092 \ replication-factor 1 \ --partitions 1 \ --topic test` - to create topic
